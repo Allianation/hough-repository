@@ -1,0 +1,105 @@
+Picked up JAVA_TOOL_OPTIONS: -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts -Djavax.net.ssl.trustStoreType=JKS -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=37097 -Dhttp.nonProxyHosts=localhost|127.0.0.1|::1|127.*|0.*|::|169.254.*|api.anthropic.com|api-staging.anthropic.com|api-pr-preview.anthropic.com|mcp-proxy.anthropic.com|mcp-proxy-staging.anthropic.com|registry.npmjs.org|jsr.io|npm.jsr.io|pypi.org|files.pythonhosted.org|index.crates.io|proxy.golang.org|host.docker.internal|10.*|172.16.*|172.17.*|172.18.*|172.19.*|172.20.*|172.21.*|172.22.*|172.23.*|172.24.*|172.25.*|172.26.*|172.27.*|172.28.*|172.29.*|172.30.*|172.31.*|192.168.*|100.64.0.0/10|*.svc.cluster.local|*.svc.cluster.local -Djdk.http.auth.tunneling.disabledSchemes= -Djdk.http.auth.proxying.disabledSchemes=
+============================================================
+PRUEBA 1 - Caso minimo: 4 pixeles de una circunferencia de R = 2 (imagen 7x7)
+============================================================
+Imagen de bordes:
+. . . . . . . 
+. . . # . . . 
+. . . . . . . 
+. # . . . # . 
+. . . . . . . 
+. . . # . . . 
+. . . . . . . 
+
+Acumulador de centros (x0, y0):
+ 0  1  1  0  1  1  0 
+ 1  2  1  0  1  2  1 
+ 1  1  2  2  2  1  1 
+ 0  0  2  4  2  0  0 
+ 1  1  2  2  2  1  1 
+ 1  2  1  0  1  2  1 
+ 0  1  1  0  1  1  0 
+
+Mejor candidato : centro = (x0 =   3, y0 =   3) | votos = 4
+Segundo pico    : centro = (x0 =   1, y0 =   1) | votos = 2
+
+============================================================
+PRUEBA 2 - Block desplazado: el aro R = 30 aparece centrado en (65, 40)
+============================================================
+Imagen: 100 x 100 px | pixeles de borde: 224 | radio buscado R = 30 px
+Resolucion angular: 1.0 grados (360 angulos) | votos emitidos: 80640
+Mejor candidato : centro = (x0 =  65, y0 =  40) | votos = 200
+Referencia A_ref = (50, 50) -> correccion: dx = +15 px, dy = -10 px
+
+============================================================
+PRUEBA 3 - Aro parcialmente oculto (se omiten 144 grados de los 360)
+============================================================
+Imagen: 100 x 100 px | pixeles de borde: 133 | radio buscado R = 30 px
+Resolucion angular: 1.0 grados (360 angulos) | votos emitidos: 47880
+Mejor candidato : centro = (x0 =  50, y0 =  50) | votos = 119
+Referencia A_ref = (50, 50) -> correccion: dx = +0 px, dy = +0 px
+
+============================================================
+PRUEBA 4 - Escena con ruido: aro doble, circunferencia menor, recta y 400 pixeles de ruido
+============================================================
+Imagen: 100 x 100 px | pixeles de borde: 922 | radio buscado R = 30 px
+Resolucion angular: 1.0 grados (360 angulos) | votos emitidos: 331920
+Mejor candidato : centro = (x0 =  50, y0 =  50) | votos = 200
+Segundo pico    : centro = (x0 =  42, y0 =  53) | votos = 49  (relacion = 4.1)
+Referencia A_ref = (50, 50) -> correccion: dx = +0 px, dy = +0 px
+
+============================================================
+PRUEBA 5 - Radio mal calibrado: aro real R = 30 pero se busca R = 25 y R = 36
+============================================================
+Busqueda con R = 25:
+Imagen: 100 x 100 px | pixeles de borde: 224 | radio buscado R = 25 px
+Resolucion angular: 1.0 grados (360 angulos) | votos emitidos: 80640
+Mejor candidato : centro = (x0 =  48, y0 =  45) | votos = 33
+Segundo pico    : centro = (x0 =  55, y0 =  48) | votos = 32  (relacion = 1.0)
+Referencia A_ref = (50, 50) -> correccion: dx = -2 px, dy = -5 px
+
+Busqueda con R = 36:
+Imagen: 100 x 100 px | pixeles de borde: 224 | radio buscado R = 36 px
+Resolucion angular: 1.0 grados (360 angulos) | votos emitidos: 80640
+Mejor candidato : centro = (x0 =  48, y0 =  44) | votos = 33
+Segundo pico    : centro = (x0 =  45, y0 =  54) | votos = 33  (relacion = 1.0)
+Referencia A_ref = (50, 50) -> correccion: dx = -2 px, dy = -6 px
+
+============================================================
+PRUEBA 6 - Radio desconocido: barrido de R = 26..34 sobre el aro de referencia
+============================================================
+  R = 26 -> mejor pico ( 49,  46) con  39 votos
+  R = 27 -> mejor pico ( 51,  47) con  42 votos
+  R = 28 -> mejor pico ( 49,  48) con  54 votos
+  R = 29 -> mejor pico ( 50,  49) con  71 votos
+  R = 30 -> mejor pico ( 50,  50) con 200 votos
+  R = 31 -> mejor pico ( 49,  49) con  71 votos
+  R = 32 -> mejor pico ( 49,  48) con  55 votos
+  R = 33 -> mejor pico ( 47,  51) con  46 votos
+  R = 34 -> mejor pico ( 48,  46) con  40 votos
+Mejor (x0, y0, R) = (50, 50, 30) con 200 votos | 9 radios | votos emitidos: 725760
+
+Comparacion con radio fijo (R = 30), misma imagen:
+Imagen: 100 x 100 px | pixeles de borde: 224 | radio buscado R = 30 px
+Resolucion angular: 1.0 grados (360 angulos) | votos emitidos: 80640
+Mejor candidato : centro = (x0 =  50, y0 =  50) | votos = 200
+
+============================================================
+PRUEBA 7 - Resolucion angular: 1 grado vs 10 grados vs 30 grados (aro R = 30 completo)
+============================================================
+Imagen: 100 x 100 px | pixeles de borde: 224 | radio buscado R = 30 px
+Resolucion angular: 1.0 grados (360 angulos) | votos emitidos: 80640
+Mejor candidato : centro = (x0 =  50, y0 =  50) | votos = 200
+Segundo pico    : centro = (x0 =  16, y0 =   1) | votos = 13  (relacion = 15.4)
+Referencia A_ref = (50, 50) -> correccion: dx = +0 px, dy = +0 px
+
+Imagen: 100 x 100 px | pixeles de borde: 224 | radio buscado R = 30 px
+Resolucion angular: 10.0 grados (36 angulos) | votos emitidos: 8064
+Mejor candidato : centro = (x0 =  50, y0 =  50) | votos = 36
+Referencia A_ref = (50, 50) -> correccion: dx = +0 px, dy = +0 px
+
+Imagen: 100 x 100 px | pixeles de borde: 224 | radio buscado R = 30 px
+Resolucion angular: 30.0 grados (12 angulos) | votos emitidos: 2688
+Mejor candidato : centro = (x0 =  50, y0 =  50) | votos = 12
+Referencia A_ref = (50, 50) -> correccion: dx = +0 px, dy = +0 px
+
